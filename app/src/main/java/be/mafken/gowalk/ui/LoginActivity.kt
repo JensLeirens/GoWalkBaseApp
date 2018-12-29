@@ -1,21 +1,20 @@
 package be.mafken.gowalk.ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import be.mafken.gowalk.R
 import be.mafken.gowalk.data.OnServiceDataCallback
 import be.mafken.gowalk.data.firebase.FirebaseServiceProvider
 import be.mafken.gowalk.data.service.AuthService
-import be.mafken.gowalk.data.service.UserService
+import be.mafken.gowalk.data.service.TrackerService
 import be.mafken.gowalk.extensions.gone
 import be.mafken.gowalk.extensions.visible
-import be.mafken.gowalk.model.User
+import be.mafken.gowalk.model.Tracker
 import com.google.firebase.auth.FirebaseAuth
-
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 
@@ -25,6 +24,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        incrementAppOpendTracker()
         val user = FirebaseAuth.getInstance().currentUser
         user?.let {
             email.gone()
@@ -150,8 +150,6 @@ class LoginActivity : AppCompatActivity() {
             object : OnServiceDataCallback<String> {
                 override fun onDataLoaded(data: String) { // returns the UID of the logged in user if it failed returns ""
                     if (data.isNotBlank()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        // get the user from the database
                         updateUI()
 
                     } else {
@@ -177,6 +175,20 @@ class LoginActivity : AppCompatActivity() {
                     login_progress.gone()
                 }
             })
+    }
+
+    fun incrementAppOpendTracker(){
+
+        val trackerService: TrackerService = FirebaseServiceProvider.getFirebaseTrackerService()
+        trackerService.loadTrackerOnceFromDatabase(object : OnServiceDataCallback<Tracker>{
+            override fun onDataLoaded(data: Tracker) {
+                data.applicationOpend += 1
+                trackerService.saveTrackerToDatabase(data)
+            }
+
+            override fun onError(error: Throwable) {
+            }
+        })
     }
 
     fun updateUI() {

@@ -9,6 +9,7 @@
     android:padding="4dp">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/walkRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/viewSeperator"
@@ -96,5 +97,16 @@
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        android:layout_margin="8dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>

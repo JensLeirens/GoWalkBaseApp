@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="be.mafken.gowalk">
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
 
         <activity
             android:name=".ui.MainActivity"
@@ -28,6 +30,7 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".data.MyFirebaseMessagingService" />
     </application>
 
 </manifest>
