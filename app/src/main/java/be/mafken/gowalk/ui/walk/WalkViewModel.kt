@@ -11,46 +11,50 @@ import be.mafken.gowalk.model.Walk
 import com.google.firebase.auth.FirebaseAuth
 
 class WalkViewModel : ViewModel() {
-    
-    private val walkService: WalkService = FirebaseServiceProvider.getWalkService()
-    val walk : MutableLiveData<Walk> = MutableLiveData()
 
-    fun getWalkingsFromDatabase(){
-        walk.value = Walk(userId = FirebaseAuth.getInstance().uid!!)
-        walkService.loadWalksOnceFromDatabase(object: OnServiceDataCallback<List<Walk>>{
-            override fun onDataLoaded(data: List<Walk>) {
-                walk.value?.id = getNewIdForWalk(data)
-            }
+ private val walkService: WalkService =
+  FirebaseServiceProvider.getWalkService()
+ val walk: MutableLiveData<Walk> = MutableLiveData()
 
-            override fun onError(error: Throwable) {
-                //ToDo: implement
+ fun getWalkingsFromDatabase() {
+  walk.value = Walk(userId = FirebaseAuth.getInstance().uid!!)
+  walkService.loadWalksOnceFromDatabase(object :
+   OnServiceDataCallback<List<Walk>> {
+   override fun onDataLoaded(data: List<Walk>) {
+    walk.value?.id = getNewIdForWalk(data)
+   }
 
-            }
-        })
-    }
+   override fun onError(error: Throwable) {
+    //ToDo: implement
 
-    fun incrementWalkingsCreatedTracker(){
-        val trackerService: TrackerService = FirebaseServiceProvider.getFirebaseTrackerService()
-        trackerService.loadTrackerOnceFromDatabase(object : OnServiceDataCallback<Tracker>{
-            override fun onDataLoaded(data: Tracker) {
-                data.addWalkingScreenOpend += 1
-                trackerService.saveTrackerToDatabase(data)
+   }
+  })
+ }
 
-            }
+ fun incrementWalkingsCreatedTracker() {
+  val trackerService: TrackerService =
+   FirebaseServiceProvider.getFirebaseTrackerService()
+  trackerService.loadTrackerOnceFromDatabase(object :
+   OnServiceDataCallback<Tracker> {
+   override fun onDataLoaded(data: Tracker) {
+    data.addWalkingScreenOpend += 1
+    trackerService.saveTrackerToDatabase(data)
 
-            override fun onError(error: Throwable) {
-            }
-        })
-    }
+   }
 
-    fun saveWalkToDatabase(){
-        walkService.saveWalkToDatabase(walk.value!!)
-    }
+   override fun onError(error: Throwable) {
+   }
+  })
+ }
 
-    fun getNewIdForWalk(walkings: List<Walk>): Int{
-        return if(walkings.isNotEmpty()) {
-            walkings.sortedBy{ it.id }.last().id + 1
-        } else 0
+ fun saveWalkToDatabase() {
+  walkService.saveWalkToDatabase(walk.value!!)
+ }
 
-    }
+ fun getNewIdForWalk(walkings: List<Walk>): Int {
+  return if (walkings.isNotEmpty()) {
+   walkings.sortedBy { it.id }.last().id + 1
+  } else 0
+
+ }
 }

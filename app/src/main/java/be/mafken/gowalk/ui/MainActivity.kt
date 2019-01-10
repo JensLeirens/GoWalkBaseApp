@@ -13,45 +13,49 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        goToFragmentWithoutBackstack(HomeFragment.newInstance())
+ override fun onCreate(savedInstanceState: Bundle?) {
+  super.onCreate(savedInstanceState)
+  setContentView(R.layout.activity_main)
+  goToFragmentWithoutBackstack(HomeFragment.newInstance())
 
-        FirebaseAuth.getInstance().addAuthStateListener {
-            it.currentUser?.let {user ->
-                createNewUser(user.email!!,user.uid)
-            }
-        }
+  FirebaseAuth.getInstance().addAuthStateListener {
+   it.currentUser?.let { user ->
+    createNewUser(user.email!!, user.uid)
+   }
+  }
 
-    }
+ }
 
-    private fun createNewUser(email: String, userId: String){
-        val userService: UserService = FirebaseServiceProvider.getFirebaseUserService()
-        val users : MutableList<User> = mutableListOf()
-        val currentUser = User(uid = userId, email = email)
-        var userAlreadyExists = false
+ private fun createNewUser(email: String, userId: String) {
+  val userService: UserService =
+   FirebaseServiceProvider.getFirebaseUserService()
+  val users: MutableList<User> = mutableListOf()
+  val currentUser = User(uid = userId, email = email)
+  var userAlreadyExists = false
 
-        userService.loadUsersFromDatabase(object : OnServiceDataCallback<List<User>>{
-            override fun onDataLoaded(data: List<User>) {
-                users.addAll(data)
-            }
-            override fun onError(error: Throwable) {
-            }
-        })
+  userService.loadUsersFromDatabase(object :
+   OnServiceDataCallback<List<User>> {
+   override fun onDataLoaded(data: List<User>) {
+    users.addAll(data)
+   }
 
-        users.forEach {
-            if(it.uid == currentUser.uid)
-                userAlreadyExists = true
-        }
+   override fun onError(error: Throwable) {
+   }
+  })
 
-        if(!userAlreadyExists){
-            val nameList = currentUser.email.split("@")[0].split(".")
-            currentUser.name = nameList.joinToString(separator = " ") { it.capitalize() }
-            userService.saveUserToDatabase(currentUser)
-        }
+  users.forEach {
+   if (it.uid == currentUser.uid)
+    userAlreadyExists = true
+  }
+
+  if (!userAlreadyExists) {
+   val nameList = currentUser.email
+    .split("@")[0].split(".")
+   currentUser.name = nameList
+    .joinToString(separator = " ") { it.capitalize() }
+   userService.saveUserToDatabase(currentUser)
+  }
 
 
-
-    }
+ }
 }
